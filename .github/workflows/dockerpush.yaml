@@ -1,9 +1,9 @@
 name: Build and push image to dockerhub 
 on: 
-  # push:
-  #   branches:
-  #     - master
-  workflow_dispatch:
+  push:
+    branches:
+      - master
+  # workflow_dispatch:
 
 jobs:
   push:
@@ -15,11 +15,11 @@ jobs:
 
     # - name: Install Docker
     #   uses: docker-practice/actions-setup-docker@master
-    
+
     - name: Install Docker
       run: |
-        apt update
-        apt install docker.io -y
+        sudo apt update
+        sudo apt install docker.io -y
 
     - name: Build image
       run: |
