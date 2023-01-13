@@ -30,5 +30,5 @@ jobs:
     - name: Configure kubectl for EKS
       run: aws eks update-kubeconfig --name eks-cluster 
 
-    - name: Update image in deployment
-      run: kubectl set image deployment/ecomm-app app=nginx --record=true
+    # - name: Update image in deployment
+    #   run: kubectl set image deployment/ecomm-app app=nginx --record=true
