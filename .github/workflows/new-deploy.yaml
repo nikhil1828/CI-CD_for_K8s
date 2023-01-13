@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Install awscli
-      run: sudo apt install awscli -y
+      run: sudo apt-get install awscli -y
 
     - name: configure AWS
       uses: aws-actions/configure-aws-credentials@v1
