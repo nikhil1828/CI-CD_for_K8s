@@ -13,13 +13,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # - name: Install Docker
-    #   uses: docker-practice/actions-setup-docker@master
+    - name: Install awscli
+      run: sudo apt install awscli -y
+
+    - name: configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
 
     - name: Install Docker
-      run: |
-        sudo apt update
-        sudo apt install docker.io -y
+      uses: docker-practice/actions-setup-docker@master
 
     - name: Build image
       run: |
@@ -37,3 +42,18 @@ jobs:
       run: |
         IMAGE_TAG=$(echo ${GITHUB_SHA} | cut -c1-7)
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:${IMAGE_TAG}
+
+    - name: Set up kubectl
+      run: |
+        VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+        curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl -o kubectl
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+
+    - name: Configure kubectl for EKS
+      run: aws eks update-kubeconfig --name eks-cluster 
+
+    - name: Update image in deployment
+      run: |
+        IMAGE_TAG=$(echo ${GITHUB_SHA} | cut -c1-7)
+        kubectl set image deployment/medi-html-deployment medi-html-container=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:${IMAGE_TAG} --record=true
