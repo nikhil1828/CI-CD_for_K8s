@@ -13,8 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # - name: Install Docker
+    #   uses: docker-practice/actions-setup-docker@master
+    
     - name: Install Docker
-      uses: docker-practice/actions-setup-docker@master
+      run: |
+        apt update
+        apt install docker.io -y
 
     - name: Build image
       run: |
